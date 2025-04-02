@@ -1,0 +1,9 @@
+---
+# - name: Make sure required variables are defined
+#   ansible.builtin.assert:
+#     that:
+#       - "lookup('ansible.builtin.env', 'SQL_SA_PASSWORD', default=sql_sa_password) is defined"
+
+- name: Get install files
+  ansible.builtin.include_tasks:
+    file: download_install_files.yml
