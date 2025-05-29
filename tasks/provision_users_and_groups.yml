@@ -5,11 +5,15 @@
     state: present
     gid: "{{ item.gid }}"
   loop: "{{ iris_groups }}"
+  tags:
+    - groups
 - name: Set root password
   ansible.builtin.user:
     name: root
     password: "{{ root_pw }}"
   when: root_pw is defined
+  tags:
+    - users
 - name: Create users
   ansible.builtin.user:
     name: "{{ item.name }}"
@@ -20,3 +24,5 @@
     append: "{{ item.append }}"
     shell: "{{ item.shell }}"
   loop: "{{ iris_users }}"
+  tags:
+    - users

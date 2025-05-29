@@ -8,3 +8,7 @@
     group: "{{ item.group | default(omit) }}"
     recurse: "{{ item.recurse | default(omit) }}"
   loop: "{{ iris_directories | default([]) }}"
+  tags:
+    - filesystem
+    - directories
+    - permissions

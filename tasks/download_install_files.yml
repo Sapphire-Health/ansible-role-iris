@@ -11,6 +11,8 @@
     - "{{ iris_install_file }}"
     - "{{ iris_instaserver_file }}"
     - "{{ iris_key_file }}"
+  tags:
+    - download
 
 - name: Copy install files from Ansible server
   ansible.builtin.copy:
@@ -23,3 +25,5 @@
     - "{{ iris_install_file }}"
     - "{{ iris_instaserver_file }}"
     - "{{ iris_key_file }}"
+  tags:
+    - download
