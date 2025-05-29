@@ -1,0 +1,22 @@
+---
+- name: Create groups
+  ansible.builtin.group:
+    name: "{{ item.name }}"
+    state: present
+    gid: "{{ item.gid }}"
+  loop: "{{ iris_groups }}"
+- name: Set root password
+  ansible.builtin.user:
+    name: root
+    password: "{{ root_pw }}"
+  when: root_pw is defined
+- name: Create users
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    password: "{{ item.password | default(omit) }}"
+    uid: "{{ item.uid }}"
+    group: "{{ item.group }}"
+    groups: "{{ item.groups }}"
+    append: "{{ item.append }}"
+    shell: "{{ item.shell }}"
+  loop: "{{ iris_users }}"

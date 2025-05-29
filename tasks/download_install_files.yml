@@ -1,11 +1,4 @@
 ---
-- name: Create install file path
-  ansible.builtin.file:
-    path: "{{ iris_install_files_path }}"
-    state: directory
-    # mode: "0755"
-    recurse: true
-
 - name: Copy install files via HTTP
   ansible.builtin.get_url:
     url: "{{ iris_install_source_dir }}/{{ item }}"

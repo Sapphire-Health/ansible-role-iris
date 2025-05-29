@@ -4,6 +4,12 @@
 #     that:
 #       - "lookup('ansible.builtin.env', 'SQL_SA_PASSWORD', default=sql_sa_password) is defined"
 
+- name: Provision users and groups
+  ansible.builtin.include_tasks:
+    file: provision_users_and_groups.yml
+- name: Prepare filesystem
+  ansible.builtin.include_tasks:
+    file: prepare_filesystem.yml
 - name: Get install files
   ansible.builtin.include_tasks:
     file: download_install_files.yml
