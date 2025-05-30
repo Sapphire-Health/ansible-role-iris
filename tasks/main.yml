@@ -3,6 +3,17 @@
 #   ansible.builtin.assert:
 #     that:
 #       - "lookup('ansible.builtin.env', 'SQL_SA_PASSWORD', default=sql_sa_password) is defined"
+- name: Check assertions
+  ansible.builtin.include_tasks:
+    file: check_assertions.yml
+  tags:
+    - always
+
+- name: Define variables
+  ansible.builtin.include_tasks:
+    file: define_variables.yml
+  tags:
+    - always
 
 - name: Provision users and groups
   ansible.builtin.include_tasks:
@@ -10,6 +21,7 @@
   tags:
     - users
     - groups
+
 - name: Prepare filesystem
   ansible.builtin.include_tasks:
     file: prepare_filesystem.yml
@@ -17,8 +29,15 @@
     - filesystem
     - directories
     - permissions
+
 - name: Get install files
   ansible.builtin.include_tasks:
     file: download_install_files.yml
   tags:
     - download
+
+- name: Extract install files
+  ansible.builtin.include_tasks:
+    file: extract_install_files.yml
+  tags:
+    - extract
