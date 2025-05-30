@@ -1,0 +1,6 @@
+---
+- name: Define extracted install files directory
+  ansible.builtin.set_fact:
+    iris_extracted_install_files_path: "{{ iris_install_files_path }}/{{ iris_instaserver_file | basename | regex_replace('\\.sh$', '') }}"
+  tags:
+    - always
