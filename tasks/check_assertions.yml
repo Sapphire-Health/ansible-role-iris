@@ -1,0 +1,5 @@
+- name: Make sure required variables are defined
+  ansible.builtin.assert:
+    that:
+      - '".tar.gz" in iris_install_file'
+      - '".sh" in iris_instaserver_file'
