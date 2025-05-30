@@ -26,3 +26,14 @@
   loop: "{{ iris_users }}"
   tags:
     - users
+- name: Allow users to sudo without password
+  ansible.builtin.template:
+    src: sudoers.j2
+    dest: /etc/sudoers.d/{{ item.name.replace(".", "-") }}
+    owner: root
+    group: root
+    mode: "0400"
+  loop: "{{ iris_users }}"
+  when: item.sudo is defined
+  tags:
+    - users
