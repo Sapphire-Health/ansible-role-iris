@@ -22,6 +22,19 @@
     - users
     - groups
 
+- name: Provision SSH keys
+  ansible.builtin.include_tasks:
+    file: ssh_keys.yml
+  tags:
+    - keys
+    
+# this task has been moved out of the iris role and is a self-contained playbook
+# - name: Populate known hosts
+#   ansible.builtin.include_tasks:
+#     file: populate_known_hosts.yml
+#   tags:
+#     - known_hosts
+
 - name: Prepare filesystem
   ansible.builtin.include_tasks:
     file: prepare_filesystem.yml
@@ -41,3 +54,10 @@
     file: extract_install_files.yml
   tags:
     - extract
+
+- name: Install and configure tuned
+  ansible.builtin.include_tasks:
+    file: install_and_configure_tuned.yml
+  tags:
+    - tuned
+    - hugepages

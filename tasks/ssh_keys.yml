@@ -1,0 +1,69 @@
+---
+# - name: Show all hosts
+#   ansible.builtin.debug:
+#     msg: "All hosts: {{ ansible_play_hosts }}"
+#   tags:
+#     - keys
+
+- name: Ensure .ssh directory exists
+  ansible.builtin.file:
+    path: "/home/{{ item.name }}/.ssh"
+    state: directory
+    owner: "{{ item.name }}"
+    group: "{{ item.group}}"
+    mode: '0700'
+  loop: "{{ iris_users }}"
+  when: item.generate_keys | default(false)
+  tags:
+    - keys
+
+- name: Generate keys
+  community.crypto.openssh_keypair:
+    path: "/home/{{ item.name }}/.ssh/id_rsa"
+    type: rsa
+    size: 2048
+    owner: "{{ item.name }}"
+    group: "{{ item.group}}"
+  loop: "{{ iris_users }}"
+  when: item.generate_keys | default(false)
+  tags:
+    - keys
+
+- name: Slurp file contents
+  ansible.builtin.slurp:
+    src: "/home/{{ item.name }}/.ssh/id_rsa.pub"
+  become: true
+  register: generated_keys
+  loop: "{{ iris_users }}"
+  when: item.generate_keys | default(false)
+  tags:
+    - keys
+
+- name: Set fact for generated keys
+  ansible.builtin.set_fact:
+    authorized_keys: "{{ authorized_keys.results | default([]) + [{ 'user': key.item.name, 'content': key.content | b64decode, 'distribute_keys': key.item.distribute_keys | default(false) }] }}"
+  vars:
+    item: "{{ key.item }}"
+  loop: "{{ generated_keys.results }}"
+  loop_control:
+    loop_var: key
+  when: key.skipped is not defined or not key.skipped
+  tags:
+    - keys
+
+- name: Show authorized_keys
+  ansible.builtin.debug:
+    msg: "{{ authorized_keys }}"
+  when: authorized_keys is defined
+  tags: 
+    - keys
+
+- name: Distribute keys
+  ansible.builtin.include_tasks:
+    file: distribute_ssh_keys.yml
+  loop: "{{ authorized_keys }}"
+  loop_control:
+    loop_var: authorized_key
+  when: authorized_keys is defined
+  tags:
+    - keys
