@@ -1,5 +1,4 @@
 ---
-# this task has been moved out of the iris role and is a self-contained playbook
 - name: Get known hosts
   ansible.builtin.command:
     cmd: "ssh-keyscan {{ hostvars[current_host]['ansible_host'] }}"
@@ -68,6 +67,7 @@
 - name: Show hosts
   ansible.builtin.debug:
     msg: "{{ known_hosts }}"
+  when: known_hosts is defined and known_hosts | length > 0
   tags:
     - known_hosts
 

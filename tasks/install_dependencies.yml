@@ -1,0 +1,10 @@
+---
+- name: Install dependencies
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - "{{ iris_dependencies }}"
+  tags:
+    - dependencies
+    - packages

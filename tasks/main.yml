@@ -15,6 +15,13 @@
   tags:
     - always
 
+- name: Install dependencies
+  ansible.builtin.include_tasks:
+    file: install_dependencies.yml
+  tags:
+    - dependencies
+    - packages
+
 - name: Provision users and groups
   ansible.builtin.include_tasks:
     file: provision_users_and_groups.yml
@@ -27,13 +34,12 @@
     file: ssh_keys.yml
   tags:
     - keys
-    
-# this task has been moved out of the iris role and is a self-contained playbook
-# - name: Populate known hosts
-#   ansible.builtin.include_tasks:
-#     file: populate_known_hosts.yml
-#   tags:
-#     - known_hosts
+
+- name: Populate known hosts
+  ansible.builtin.include_tasks:
+    file: populate_known_hosts.yml
+  tags:
+    - known_hosts
 
 - name: Prepare filesystem
   ansible.builtin.include_tasks:

@@ -2,6 +2,9 @@ iris_install_files_path: /epic/tmp
 iris_admin_user: epicadm
 iris_user_group: epicuser
 
+iris_dependencies:
+  - ksh
+
 iris_directories:
   - path: "{{ iris_install_files_path }}"
     state: directory
