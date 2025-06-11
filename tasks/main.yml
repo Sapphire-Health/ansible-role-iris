@@ -9,6 +9,12 @@
   tags:
     - always
 
+- name: Configure selinux
+  ansible.builtin.include_tasks:
+    file: configure_selinux.yml
+  tags:
+    - selinux
+
 - name: Define variables
   ansible.builtin.include_tasks:
     file: define_variables.yml
