@@ -2,8 +2,11 @@ iris_install_files_path: /epic/tmp
 iris_admin_user: epicadm
 iris_user_group: epicuser
 
+iris_selinux_state: disabled
+
 iris_dependencies:
   - ksh
+  - vim
 
 iris_directories:
   - path: "{{ iris_install_files_path }}"
@@ -11,4 +14,13 @@ iris_directories:
     mode: "1777"
     owner: "{{ iris_admin_user }}"
     group: "{{ iris_user_group }}"
-    # recurse: true
+  - path: "/epic/work"
+    state: directory
+    mode: "2775"
+    owner: "{{ iris_admin_user }}"
+    group: "{{ iris_user_group }}"
+  - path: "/usr/local/epic"
+    state: directory
+    mode: "1755"
+    owner: "{{ iris_admin_user }}"
+    group: "epicsys"
