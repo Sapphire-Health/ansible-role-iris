@@ -1,81 +1,62 @@
 ---
-- name: Get the name of the correct package
-  ansible.builtin.find:
-    paths: "{{ iris_extracted_install_files_path }}/other/linuxconfig"
-    patterns: 'epic-config-*.el{{ ansible_distribution_major_version }}.noarch.rpm'
-  register: rpm
+- name: Add tags to all tasks
   tags:
     - tuned
     - hugepages
+  block:
+    - name: Get the name of the correct package
+      ansible.builtin.find:
+        paths: "{{ iris_extracted_install_files_path }}/other/linuxconfig"
+        patterns: 'epic-config-*.el{{ ansible_distribution_major_version }}.noarch.rpm'
+      register: rpm
 
-- name: Fail if no RPM package found or if more than one found
-  ansible.builtin.fail:
-    msg: >-
-      No RPM package found matching 'epic-config-*.el{{ ansible_distribution_major_version }}.noarch.rpm'
-      in {{ iris_extracted_install_files_path }}/other/linuxconfig
-  when: rpm.matched != 1
-  tags:
-    - tuned
-    - hugepages
+    - name: Fail if no RPM package found or if more than one found
+      ansible.builtin.fail:
+        msg: >-
+          No RPM package found matching 'epic-config-*.el{{ ansible_distribution_major_version }}.noarch.rpm'
+          in {{ iris_extracted_install_files_path }}/other/linuxconfig
+      when: rpm.matched != 1
 
-- name: Install epic-config package
-  ansible.builtin.dnf:
-    name: "{{ rpm.files[0].path }}"
-    disable_gpg_check: true
-    state: present
-  tags:
-    - tuned
-    - hugepages
+    - name: Install epic-config package
+      ansible.builtin.dnf:
+        name: "{{ rpm.files[0].path }}"
+        disable_gpg_check: true
+        state: present
 
-- name: Configure hugepagesz
-  community.general.ini_file:
-    path: /etc/tuned/epic/tuned.conf
-    state: present
-    mode: 0644
-    owner: root
-    group: root
-    no_extra_spaces: yes
-    section: variables
-    option: hugepagesz
-    value: 1G
-  tags:
-    - tuned
-    - hugepages
+    - name: Configure hugepagesz
+      community.general.ini_file:
+        path: /etc/tuned/epic/tuned.conf
+        state: present
+        mode: "0644"
+        owner: root
+        group: root
+        no_extra_spaces: true
+        section: variables
+        option: hugepagesz
+        value: 1G
 
-- name: Configure hugepages
-  community.general.ini_file:
-    path: /etc/tuned/epic/tuned.conf
-    state: present
-    mode: 0644
-    owner: root
-    group: root
-    no_extra_spaces: true
-    section: variables
-    option: hugepages
-    value: "{{ hugepages }}"
-  tags:
-    - tuned
-    - hugepages
+    - name: Configure hugepages
+      community.general.ini_file:
+        path: /etc/tuned/epic/tuned.conf
+        state: present
+        mode: "0644"
+        owner: root
+        group: root
+        no_extra_spaces: true
+        section: variables
+        option: hugepages
+        value: "{{ hugepages }}"
 
-- name: Run tuned-adm command
-  ansible.builtin.command: "/usr/sbin/tuned-adm profile epic"
-  register: tunedadm
-  tags:
-    - tuned
-    - hugepages
+    - name: Run tuned-adm command
+      ansible.builtin.command: "/usr/sbin/tuned-adm profile epic"
+      register: tunedadm
 
-- name: Show results of tuned-adm command
-  ansible.builtin.debug:
-    msg: "{{ tunedadm }}"
-  tags:
-    - tuned
-    - hugepages
+    - name: Show results of tuned-adm command
+      ansible.builtin.debug:
+        msg: "{{ tunedadm }}"
 
-- name: Start and enable tuned service
-  ansible.builtin.service:
-    name: tuned
-    state: started
-    enabled: true
-  tags:
-    - tuned
-    - hugepages
+    - name: Start and enable tuned service
+      ansible.builtin.service:
+        name: tuned
+        state: started
+        enabled: true

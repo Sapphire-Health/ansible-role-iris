@@ -1,42 +1,38 @@
 ---
-- name: Create groups
-  ansible.builtin.group:
-    name: "{{ item.name }}"
-    state: present
-    gid: "{{ item.gid }}"
-  loop: "{{ iris_groups }}"
+- name: Add tags to all tasks
   tags:
     - groups
+  block:
+    - name: Create groups
+      ansible.builtin.group:
+        name: "{{ item.name }}"
+        state: present
+        gid: "{{ item.gid }}"
+      loop: "{{ iris_groups }}"
 
-- name: Set root password
-  ansible.builtin.user:
-    name: root
-    password: "{{ root_pw }}"
-  when: root_pw is defined
-  tags:
-    - users
+    - name: Set root password
+      ansible.builtin.user:
+        name: root
+        password: "{{ root_pw }}"
+      when: root_pw is defined
 
-- name: Create users
-  ansible.builtin.user:
-    name: "{{ item.name }}"
-    password: "{{ item.password | default(omit) }}"
-    uid: "{{ item.uid }}"
-    group: "{{ item.group }}"
-    groups: "{{ item.groups }}"
-    append: "{{ item.append }}"
-    shell: "{{ item.shell }}"
-  loop: "{{ iris_users }}"
-  tags:
-    - users
+    - name: Create users
+      ansible.builtin.user:
+        name: "{{ item.name }}"
+        password: "{{ item.password | default(omit) }}"
+        uid: "{{ item.uid }}"
+        group: "{{ item.group }}"
+        groups: "{{ item.groups }}"
+        append: "{{ item.append }}"
+        shell: "{{ item.shell }}"
+      loop: "{{ iris_users }}"
 
-- name: Allow users to sudo without password
-  ansible.builtin.template:
-    src: sudoers.j2
-    dest: /etc/sudoers.d/{{ item.name.replace(".", "-") }}
-    owner: root
-    group: root
-    mode: "0400"
-  loop: "{{ iris_users }}"
-  when: item.sudo is defined
-  tags:
-    - users
+    - name: Allow users to sudo without password
+      ansible.builtin.template:
+        src: sudoers.j2
+        dest: /etc/sudoers.d/{{ item.name.replace(".", "-") }}
+        owner: root
+        group: root
+        mode: "0400"
+      loop: "{{ iris_users }}"
+      when: item.sudo is defined

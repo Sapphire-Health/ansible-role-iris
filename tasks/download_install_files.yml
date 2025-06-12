@@ -1,29 +1,29 @@
 ---
-- name: Copy install files via HTTP
-  ansible.builtin.get_url:
-    url: "{{ iris_install_source_dir }}/{{ item }}"
-    dest: "{{ iris_install_files_path }}/{{ item }}"
-    validate_certs: false
-    mode: "0755"
-    force: false
-  when: iris_install_source_dir is ansible.builtin.uri(schemes=['http', 'https'])
-  loop:
-    - "{{ iris_install_file }}"
-    - "{{ iris_instaserver_file }}"
-    - "{{ iris_key_file }}"
+- name: Add tags to all tasks
   tags:
     - download
+  block:
+    - name: Copy install files via HTTP
+      ansible.builtin.get_url:
+        url: "{{ iris_install_source_dir }}/{{ item }}"
+        dest: "{{ iris_install_files_path }}/{{ item }}"
+        validate_certs: false
+        mode: "0755"
+        force: false
+      when: iris_install_source_dir is ansible.builtin.uri(schemes=['http', 'https'])
+      loop:
+        - "{{ iris_install_file }}"
+        - "{{ iris_instaserver_file }}"
+        - "{{ iris_key_file }}"
 
-- name: Copy install files from Ansible server
-  ansible.builtin.copy:
-    src: "{{ playbook_dir }}/{{ iris_install_source_dir }}/{{ item }}"
-    dest: "{{ iris_install_files_path }}/{{ item }}"
-    mode: "0755"
-    force: false
-  when: iris_install_source_dir is not ansible.builtin.uri(schemes=['http', 'https'])
-  loop:
-    - "{{ iris_install_file }}"
-    - "{{ iris_instaserver_file }}"
-    - "{{ iris_key_file }}"
-  tags:
-    - download
+    - name: Copy install files from Ansible server
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/{{ iris_install_source_dir }}/{{ item }}"
+        dest: "{{ iris_install_files_path }}/{{ item }}"
+        mode: "0755"
+        force: false
+      when: iris_install_source_dir is not ansible.builtin.uri(schemes=['http', 'https'])
+      loop:
+        - "{{ iris_install_file }}"
+        - "{{ iris_instaserver_file }}"
+        - "{{ iris_key_file }}"

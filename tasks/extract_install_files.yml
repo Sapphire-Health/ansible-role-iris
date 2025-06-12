@@ -1,16 +1,16 @@
 ---
-- name: Check if install files are already extracted
-  ansible.builtin.stat:
-    path: "{{ iris_extracted_install_files_path }}"
-  register: extracted_directory
+- name: Add tags to all tasks
   tags:
     - extract
+  block:
+    - name: Check if install files are already extracted
+      ansible.builtin.stat:
+        path: "{{ iris_extracted_install_files_path }}"
+      register: extracted_directory
 
-- name: Extract install files
-  ansible.builtin.command: "sh {{ iris_instaserver_file }} -extract"
-  args:
-    chdir: "{{ iris_install_files_path }}"
-  when: not extracted_directory.stat.exists
-  # changed_when: not extracted_directory.stat.exists
-  tags:
-    - extract
+    - name: Extract install files
+      ansible.builtin.command: "sh {{ iris_instaserver_file }} -extract"
+      args:
+        chdir: "{{ iris_install_files_path }}"
+      when: not extracted_directory.stat.exists
+      changed_when: not extracted_directory.stat.exists

@@ -1,14 +1,16 @@
 ---
-- name: Create directories and configure permissions
-  ansible.builtin.file:
-    path: "{{ item.path }}"
-    state: "{{ item.state | default(omit) }}"
-    mode: "{{ item.mode | default(omit) }}"
-    owner: "{{ item.owner | default(omit) }}"
-    group: "{{ item.group | default(omit) }}"
-    recurse: "{{ item.recurse | default(omit) }}"
-  loop: "{{ iris_directories | default([]) }}"
+- name: Add tags to all tasks
   tags:
     - filesystem
     - directories
     - permissions
+  block:
+    - name: Create directories and configure permissions
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: "{{ item.state | default(omit) }}"
+        mode: "{{ item.mode | default(omit) }}"
+        owner: "{{ item.owner | default(omit) }}"
+        group: "{{ item.group | default(omit) }}"
+        recurse: "{{ item.recurse | default(omit) }}"
+      loop: "{{ iris_directories | default([]) }}"

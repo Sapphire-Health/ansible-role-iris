@@ -1,14 +1,16 @@
 ---
 # this is called by the ssh_keys.yml task
-- name: Distribute keys
-  ansible.posix.authorized_key:
-    user: "{{ authorized_key.user }}"
-    state: present
-    key: "{{ authorized_key.content }}"
-  delegate_to: "{{ current_host }}"
-  loop: "{{ ansible_play_hosts }}"
-  loop_control:
-    loop_var: current_host
-  when: inventory_hostname != current_host
+- name: Add tags to all tasks
   tags:
     - keys
+  block:
+    - name: Distribute keys
+      ansible.posix.authorized_key:
+        user: "{{ authorized_key.user }}"
+        state: present
+        key: "{{ authorized_key.content }}"
+      delegate_to: "{{ current_host }}"
+      loop: "{{ ansible_play_hosts }}"
+      loop_control:
+        loop_var: current_host
+      when: inventory_hostname != current_host

@@ -1,33 +1,27 @@
 ---
-- name: Run selinux linux system role
-  ansible.builtin.shell: /usr/sbin/getenforce
-  changed_when: false
-  register: selinux_status
+- name: Add tags to all tasks
   tags:
     - selinux
+  block:
+    - name: Run selinux linux system role
+      ansible.builtin.shell: /usr/sbin/getenforce
+      changed_when: false
+      register: selinux_status
 
-- name: Disable selinux
-  ansible.builtin.shell: "/usr/sbin/setenforce 0"
-  when: selinux_status.stdout | lower != "disabled" and selinux_status.stdout | lower == "enforcing" and iris_selinux_state != "enforcing"
-  tags:
-    - selinux
+    - name: Disable selinux
+      ansible.builtin.shell: "/usr/sbin/setenforce 0"
+      when: selinux_status.stdout | lower != "disabled" and selinux_status.stdout | lower == "enforcing" and iris_selinux_state != "enforcing"
 
-- name: Enable selinux
-  ansible.builtin.shell: "/usr/sbin/setenforce 1"
-  when: selinux_status.stdout | lower != "disabled" and selinux_status.stdout | lower != "enforcing" and iris_selinux_state == "enforcing"
-  tags:
-    - selinux
+    - name: Enable selinux
+      ansible.builtin.shell: "/usr/sbin/setenforce 1"
+      when: selinux_status.stdout | lower != "disabled" and selinux_status.stdout | lower != "enforcing" and iris_selinux_state == "enforcing"
 
-- name: Set policy to targeted if not disabling
-  ansible.builtin.set_fact:
-    selinux_policy: targeted
-  when: iris_selinux_state != "disabled"
-  tags:
-    - selinux
+    - name: Set policy to targeted if not disabling
+      ansible.builtin.set_fact:
+        selinux_policy: targeted
+      when: iris_selinux_state != "disabled"
 
-- name: Update selinux config
-  ansible.posix.selinux:
-    policy: "{{ selinux_policy | default(omit) }}"
-    state: "{{ iris_selinux_state }}"
-  tags:
-    - selinux
+    - name: Update selinux config
+      ansible.posix.selinux:
+        policy: "{{ selinux_policy | default(omit) }}"
+        state: "{{ iris_selinux_state }}"
