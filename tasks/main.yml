@@ -41,6 +41,12 @@
   tags:
     - keys
 
+- name: Customize SSH Config
+  ansible.builtin.include_tasks:
+    file: configure_ssh.yml
+  tags:
+    - ssh
+
 - name: Populate known hosts
   ansible.builtin.include_tasks:
     file: populate_known_hosts.yml
