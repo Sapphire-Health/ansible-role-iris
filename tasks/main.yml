@@ -60,18 +60,21 @@
     - filesystem
     - directories
     - permissions
+    - iris
 
 - name: Get install files
   ansible.builtin.include_tasks:
     file: download_install_files.yml
   tags:
     - download
+    - iris
 
 - name: Extract install files
   ansible.builtin.include_tasks:
     file: extract_install_files.yml
   tags:
     - extract
+    - iris
 
 - name: Install and configure tuned
   ansible.builtin.include_tasks:
@@ -79,3 +82,4 @@
   tags:
     - tuned
     - hugepages
+    - iris

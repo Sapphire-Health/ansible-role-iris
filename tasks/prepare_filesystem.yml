@@ -4,6 +4,7 @@
     - filesystem
     - directories
     - permissions
+    - iris
   block:
     - name: Create directories and configure permissions
       ansible.builtin.file:

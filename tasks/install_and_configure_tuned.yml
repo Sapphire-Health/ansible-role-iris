@@ -3,6 +3,7 @@
   tags:
     - tuned
     - hugepages
+    - iris
   block:
     - name: Get the name of the correct package
       ansible.builtin.find:
