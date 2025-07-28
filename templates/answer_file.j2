@@ -1,0 +1,19 @@
+{% for instance in answer_file.Instances %}
+Instance={{instance.Instance}},Directory={{instance.Directory | default('/epic/' + instance.Instance | lower)}},InstanceType={{instance.Type | default('NONPROD')}},SuperServerPort={{instance.SuperServerPort | default(1971 + loop.index)}},WebServerPort={{instance.WebServerPort | default(57771 + loop.index)}}
+{% endfor %}
+LicenseKey={{iris_install_files_path}}/{{iris_key_file}}
+Password={{answer_file.Password | default(lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters', 'digits'], length=12))}}
+SystemPulseServer={{answer_file.SystemPulseServer}}
+KuiperServer={{answer_file.KuiperServer}}
+SMTPServer={{answer_file.SMTPServer}}
+EmailFrom={{answer_file.EmailFrom}}
+EmailTo={{answer_file.EmailTo}}
+Organization={{answer_file.Organization}}
+{% if answer_file.OtherRemoteServer is defined and answer_file.OtherRemoteServer | length > 0 %}
+{% for ors in answer_file.OtherRemoteServer %}
+"OtherRemoteServer={{ors.Hostname}},CheckSystemConfig={{ors.CheckSystemConfig}},HostType={{ors.HostType}},Port={{ors.Port | default(10443 + loop.index)}},queued={{ors.Queued}}"
+{% endfor %}
+{% else %}
+"OtherRemoteServer=localhost,CheckSystemConfig=0,HostType=Epic database,Port=10443,queued=0"
+{% endif %}
+PRDESMPRemoteHost={{answer_file.PRDESMPRemoteHost}},DRESMPRemoteHost={{answer_file.DRESMPRemoteHost}}
