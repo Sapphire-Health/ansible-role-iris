@@ -9,6 +9,8 @@
         url: "{{ iris_install_source_dir }}/{{ item }}"
         dest: "{{ iris_install_files_path }}/{{ item }}"
         validate_certs: false
+        # owner: "{{ iris_admin_user }}"
+        # group: "{{ iris_admin_group }}"
         mode: "0755"
         force: false
       when: iris_install_source_dir is ansible.builtin.uri(schemes=['http', 'https'])
@@ -21,6 +23,8 @@
       ansible.builtin.copy:
         src: "{{ playbook_dir }}/{{ iris_install_source_dir }}/{{ item }}"
         dest: "{{ iris_install_files_path }}/{{ item }}"
+        # owner: "{{ iris_admin_user }}"
+        # group: "{{ iris_admin_group }}"
         mode: "0755"
         force: false
       when: iris_install_source_dir is not ansible.builtin.uri(schemes=['http', 'https'])

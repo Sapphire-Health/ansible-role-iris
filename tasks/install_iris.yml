@@ -1,0 +1,41 @@
+---
+- name: Add tags to all tasks
+  tags:
+    - iris
+    - answerfile
+  block:
+  - name: Check if Iris binary exists
+    ansible.builtin.stat:
+      path: "{{ iris_bin }}"
+    register: irisbin
+
+  - name: Install Iris if not already installed
+    when: irisbin.stat.exists != True
+    block:
+
+    - name: Set facts for IRIS installation
+      ansible.builtin.set_fact:
+        answer_file: "{{ iris_instaserver_variables }}"
+
+    - name: Template to build answer_file
+      ansible.builtin.template:
+        src: answer_file.j2
+        dest: "{{ iris_extracted_install_files_path }}/{{ iris_answerfile_name }}"
+        # owner: "{{ iris_admin_user }}"
+        # group: "{{ iris_admin_group }}"
+        mode: '0644'
+
+    - name: Show the contents of the answer file
+      ansible.builtin.shell: "cat {{ iris_extracted_install_files_path }}/{{ iris_answerfile_name }}"
+      register: answer_file_contents
+
+    - name: Debug the answer file contents
+      ansible.builtin.debug:
+        msg: "{{ answer_file_contents.stdout }}"
+
+    - name: Install Iris
+      command: "sh {{ iris_instaserver_file }} --component {{ component | default('BuildCustom') }} --variable_file {{ iris_extracted_install_files_path }}/{{ iris_answerfile_name }}"
+      args:
+        chdir: "{{ iris_install_files_path }}"
+      when: irisbin.stat.exists != True
+      register: irisinstall

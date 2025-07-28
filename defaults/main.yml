@@ -1,6 +1,8 @@
 iris_install_files_path: /epic/tmp
 iris_admin_user: epicadm
-iris_user_group: epicuser
+iris_admin_group: epicuser
+
+iris_answerfile_name: answer_file.txt
 
 iris_selinux_state: disabled
 
@@ -13,14 +15,16 @@ iris_directories:
     state: directory
     mode: "1777"
     owner: "{{ iris_admin_user }}"
-    group: "{{ iris_user_group }}"
+    group: "{{ iris_admin_group }}"
   - path: "/epic/work"
     state: directory
     mode: "2775"
     owner: "{{ iris_admin_user }}"
-    group: "{{ iris_user_group }}"
+    group: "{{ iris_admin_group }}"
   - path: "/usr/local/epic"
     state: directory
     mode: "1755"
     owner: "{{ iris_admin_user }}"
     group: "epicsys"
+
+iris_bin: /usr/bin/iris

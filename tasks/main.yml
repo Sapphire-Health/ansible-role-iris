@@ -83,3 +83,10 @@
     - tuned
     - hugepages
     - iris
+
+- name: Install iris
+  ansible.builtin.include_tasks:
+    file: install_iris.yml
+  tags:
+    - iris
+    - answerfile

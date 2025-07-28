@@ -1,9 +1,9 @@
 ---
 - name: Add tags to all tasks
   tags:
+    - iris
     - tuned
     - hugepages
-    - iris
   block:
     - name: Get the name of the correct package
       ansible.builtin.find:
