@@ -48,16 +48,32 @@
         option: hugepages
         value: "{{ hugepages }}"
 
-    - name: Run tuned-adm command
-      ansible.builtin.command: "/usr/sbin/tuned-adm profile epic"
-      register: tunedadm
+    - name: Run tuned-adm profile command
+      ansible.builtin.command: /usr/sbin/tuned-adm profile epic
+      # register: tunedadm
 
-    - name: Show results of tuned-adm command
-      ansible.builtin.debug:
-        msg: "{{ tunedadm }}"
+    # - name: Show results of tuned-adm command
+    #   ansible.builtin.debug:
+    #     msg: "{{ tunedadm }}"
 
     - name: Start and enable tuned service
       ansible.builtin.service:
         name: tuned
         state: started
         enabled: true
+
+    - name: Run tuned-adm verify command and reboot to apply changes if it fails
+      ansible.builtin.command: /usr/sbin/tuned-adm verify
+      failed_when: false
+      register: tunedadm_verify
+
+    - name: Reboot when tuned-adm verify fails
+      ansible.builtin.reboot:
+        msg: "Rebooting to apply tuned configuration changes"
+      when: tunedadm_verify.rc != 0
+      register: reboot_result
+      ignore_errors: true
+        
+    - name: Run tuned-adm verify command and stop if it fails
+      ansible.builtin.command: /usr/sbin/tuned-adm verify
+      register: tunedadm_verify
