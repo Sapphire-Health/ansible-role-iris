@@ -84,7 +84,7 @@
         value: "1"
       when: aws_uri_check.status == 200
 
-    - name: Set kernel.unknown_nmi_panic = 1 if host is AWS EC2 instance or Azure VM
+    - name: Set cmdline.4 = nosmt if host is AWS EC2 instance or Azure VM
       community.general.ini_file:
         path: /etc/tuned/epic/tuned.conf
         state: present
