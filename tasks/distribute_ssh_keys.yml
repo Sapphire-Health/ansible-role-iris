@@ -2,7 +2,7 @@
 # this is called by the ssh_keys.yml task
 - name: Add tags to all tasks
   tags:
-    - keys
+    - always
   block:
     - name: Distribute keys
       ansible.posix.authorized_key:

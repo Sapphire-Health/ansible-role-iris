@@ -1,7 +1,7 @@
 ---
 - name: Add tags to all tasks
   tags:
-    - groups
+    - always
   block:
     - name: Create groups
       ansible.builtin.group:

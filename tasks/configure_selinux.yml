@@ -1,7 +1,7 @@
 ---
 - name: Add tags to all tasks
   tags:
-    - selinux
+    - always
   block:
     - name: Run selinux linux system role
       ansible.builtin.shell: /usr/sbin/getenforce

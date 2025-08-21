@@ -1,8 +1,7 @@
 ---
 - name: Add tags to all tasks
   tags:
-    - dependencies
-    - packages
+    - always
   block:
     - name: Install dependencies
       ansible.builtin.dnf:

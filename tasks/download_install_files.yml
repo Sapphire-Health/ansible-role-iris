@@ -1,8 +1,7 @@
 ---
 - name: Add tags to all tasks
   tags:
-    - download
-    - iris
+    - always
   block:
     - name: Copy install files via HTTP
       ansible.builtin.get_url:

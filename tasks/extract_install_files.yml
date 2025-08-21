@@ -1,8 +1,7 @@
 ---
 - name: Add tags to all tasks
   tags:
-    - extract
-    - iris
+    - always
   block:
     - name: Check if install files are already extracted
       ansible.builtin.stat:

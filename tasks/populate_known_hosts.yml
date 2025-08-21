@@ -1,7 +1,7 @@
 ---
 - name: Add tags to all tasks
   tags:
-    - known_hosts
+    - always
   block:
     - name: Get known hosts
       ansible.builtin.command:

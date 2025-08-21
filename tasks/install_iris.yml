@@ -1,8 +1,7 @@
 ---
 - name: Add tags to all tasks
   tags:
-    - iris
-    # - answerfile
+    - always
   block:
   - name: Check if Iris binary exists
     ansible.builtin.stat:

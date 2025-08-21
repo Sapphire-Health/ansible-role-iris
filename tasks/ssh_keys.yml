@@ -1,7 +1,7 @@
 ---
 - name: Add tags to all tasks
   tags:
-    - keys
+    - always
   block:
     # - name: Show all hosts
     #   ansible.builtin.debug:

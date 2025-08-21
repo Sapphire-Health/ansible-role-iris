@@ -1,10 +1,7 @@
 ---
 - name: Add tags to all tasks
   tags:
-    - filesystem
-    - directories
-    - permissions
-    - iris
+    - always
   block:
     - name: Create directories and configure permissions
       ansible.builtin.file:
