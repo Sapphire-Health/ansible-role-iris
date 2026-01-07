@@ -20,11 +20,11 @@
       ansible.builtin.user:
         name: "{{ item.name }}"
         password: "{{ item.password | default(omit) }}"
-        uid: "{{ item.uid }}"
-        group: "{{ item.group }}"
-        groups: "{{ item.groups }}"
-        append: "{{ item.append }}"
-        shell: "{{ item.shell }}"
+        uid: "{{ item.uid | default(omit) }}"
+        group: "{{ item.group | default(omit) }}"
+        groups: "{{ item.groups | default(omit) }}"
+        append: "{{ item.append | default(omit) }}"
+        shell: "{{ item.shell | default(omit) }}"
       loop: "{{ iris_users }}"
 
     - name: Allow users to sudo without password
