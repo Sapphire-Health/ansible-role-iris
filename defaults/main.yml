@@ -26,5 +26,40 @@ iris_directories:
     mode: "1755"
     owner: "{{ iris_admin_user }}"
     group: "epicsys"
+  - path: "/epic/pki"
+    state: directory
+    mode: "1755"
+    owner: "{{ iris_admin_user }}"
+    group: "epicsys"
+  - path: "/epic/pki/certs"
+    state: directory
+    mode: "1755"
+    owner: "{{ iris_admin_user }}"
+    group: "epicsys"
+  - path: "/epic/pki/client"
+    state: directory
+    mode: "1755"
+    owner: "{{ iris_admin_user }}"
+    group: "epicsys"
+  - path: "/epic/pki/crl"
+    state: directory
+    mode: "1755"
+    owner: "{{ iris_admin_user }}"
+    group: "epicsys"
+  - path: "/epic/pki/keys"
+    state: directory
+    mode: "1755"
+    owner: "{{ iris_admin_user }}"
+    group: "epicsys"
+  - path: "/epic/pki/esmp_trusted_client_certificates"
+    state: directory
+    mode: "1755"
+    owner: "{{ iris_admin_user }}"
+    group: "epicsys"
+  - path: "/epic/pki/esmp_trusted_server_certificates"
+    state: directory
+    mode: "1755"
+    owner: "{{ iris_admin_user }}"
+    group: "epicsys"
 
 iris_bin: /usr/bin/iris

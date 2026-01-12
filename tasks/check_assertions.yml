@@ -2,6 +2,9 @@
   tags:
     - always
   block:
+    # - name: Show tags
+    #   ansible.builtin.debug:
+    #     msg: "{{ ansible_run_tags }}"
     - name: Make sure required variables are defined
       ansible.builtin.assert:
         that:

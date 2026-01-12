@@ -13,7 +13,5 @@ Organization={{answer_file.Organization}}
 {% for ors in answer_file.OtherRemoteServer %}
 "OtherRemoteServer={{ors.Hostname}},CheckSystemConfig={{ors.CheckSystemConfig}},HostType={{ors.HostType}},Port={{ors.Port | default(10443 + loop.index)}},queued={{ors.Queued}}"
 {% endfor %}
-{% else %}
-"OtherRemoteServer={{inventory_hostname}},CheckSystemConfig=0,HostType=Epic database,Port=10443,queued=0"
 {% endif %}
 PRDESMPRemoteHost={{answer_file.PRDESMPRemoteHost}},DRESMPRemoteHost={{answer_file.DRESMPRemoteHost}}

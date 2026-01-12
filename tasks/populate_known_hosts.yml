@@ -20,6 +20,7 @@
       vars:
         aliases:
           - "{{ hostvars[current_host]['ansible_host'] | lower }}"
+          - "{{ hostvars[current_host]['ansible_hostname'] | lower }}"
           - "{{ hostvars[current_host]['inventory_hostname'] | lower }}"
           - "{{ hostvars[current_host]['inventory_hostname_short'] | lower }}"
       loop: "{{ ansible_play_hosts }}"
