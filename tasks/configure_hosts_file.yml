@@ -27,6 +27,7 @@
         insertafter: ^.*localhost.*$
         regexp: '^{{ item.key}}'
         line: "{{ item.key }}\t{{ item.value | join(' ') }}"
+        backup: "{{ iris_config_backup | default(false) }}"
       loop: "{{ hosts_entries | dict2items }}"
       loop_control:
         label: "{{ item.key }}\t{{ item.value | join(' ') }}"

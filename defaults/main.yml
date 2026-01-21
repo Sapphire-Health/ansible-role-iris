@@ -1,7 +1,7 @@
 iris_install_files_path: /epic/tmp
 iris_admin_user: epicadm
 iris_admin_group: epicuser
-
+iris_config_backup: false
 iris_answerfile_name: answer_file.txt
 
 iris_selinux_state: disabled
