@@ -35,6 +35,12 @@
     - users
     - groups
 
+- name: Configure Hosts File
+  ansible.builtin.include_tasks:
+    file: configure_hosts_file.yml
+  tags:
+    - hosts
+
 - name: Provision SSH keys
   ansible.builtin.include_tasks:
     file: ssh_keys.yml

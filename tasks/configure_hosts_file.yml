@@ -1,0 +1,33 @@
+---
+- name: Add tags to all tasks
+  tags:
+    - always
+  block:
+    - name: Set fact for hosts entries
+      ansible.builtin.set_fact:
+        hosts_entries: "{{ hosts_entries | default({}) | combine({hostvars[current_host]['ansible_host'] | lower: aliases | unique }) }}"
+      vars:
+        aliases:
+          - "{{ hostvars[current_host]['ansible_hostname'] | lower }}"
+          - "{{ hostvars[current_host]['inventory_hostname'] | lower }}"
+          - "{{ hostvars[current_host]['inventory_hostname_short'] | lower }}"
+      loop: "{{ ansible_play_hosts }}"
+      loop_control:
+        loop_var: current_host
+      when: inventory_hostname != current_host
+
+    # - name: Show hosts_entries
+    #   ansible.builtin.debug:
+    #     msg: "{{ hosts_entries }}"
+    #   when: hosts_entries is defined
+
+    - name: Add hosts entries
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        insertafter: ^.*localhost.*$
+        regexp: '^{{ item.key}}'
+        line: "{{ item.key }}\t{{ item.value | join(' ') }}"
+      loop: "{{ hosts_entries | dict2items }}"
+      loop_control:
+        label: "{{ item.key }}\t{{ item.value | join(' ') }}"
+      become: true
