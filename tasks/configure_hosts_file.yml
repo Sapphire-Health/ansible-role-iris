@@ -32,3 +32,4 @@
       loop_control:
         label: "{{ item.key }}\t{{ item.value | join(' ') }}"
       become: true
+      when: hosts_entries is defined
