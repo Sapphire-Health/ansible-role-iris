@@ -1,0 +1,13 @@
+---
+- name: Add tags to all tasks
+  tags:
+    - always
+  block:
+    - name: Configure sudoers
+      ansible.builtin.template:
+        src: sudoers.j2
+        dest: /etc/sudoers.d/{{ item.key.replace(".", "-") }}
+        owner: root
+        group: root
+        mode: "0400"
+      loop: "{{ sudoers | dict2items }}"
