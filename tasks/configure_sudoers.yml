@@ -3,9 +3,9 @@
   tags:
     - always
   block:
-    - name: show sudoers configuration
-      ansible.builtin.debug:
-        var: iris_sudoers
+    # - name: show sudoers configuration
+    #   ansible.builtin.debug:
+    #     var: iris_sudoers
 
     - name: Configure sudoers
       ansible.builtin.template:
