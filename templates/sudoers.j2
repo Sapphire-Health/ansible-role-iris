@@ -1,1 +1,1 @@
-{{ item.name }} {{ item.sudo }}
+{{ "%s\t%s" | format(item.user, item.value | default('ALL=(ALL) NOPASSWD:ALL', true)) }}
