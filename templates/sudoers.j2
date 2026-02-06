@@ -1,1 +1,1 @@
-{{ "%s\t%s" | format(item.key, item.value | default('ALL=(ALL) NOPASSWD:ALL', true)) }}
+{{ "%s\t%s" | format(item.user, item.value | default('ALL=(ALL) NOPASSWD:ALL', true)) }}

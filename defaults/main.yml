@@ -4,6 +4,8 @@ iris_admin_group: epicuser
 iris_config_backup: false
 iris_answerfile_name: answer_file.txt
 
+iris_sudoers: "{{ sudoers | default([{'user': 'epicadm', 'value': 'ALL=(ALL) NOPASSWD:ALL', 'file_name': '98_epicadm', 'state': 'present'}]) }}"
+
 iris_selinux_state: disabled
 
 iris_dependencies:
