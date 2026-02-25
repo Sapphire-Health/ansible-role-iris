@@ -8,4 +8,3 @@
         src: "{{ sshd_template | default('sshd_config.j2') }}"
         dest: /etc/ssh/sshd_config
       notify: Restart sshd
-
