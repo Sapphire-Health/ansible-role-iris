@@ -1,3 +1,4 @@
+iris_install_source_dir: "{{ shared_files_directory }}"
 iris_install_files_path: /epic/tmp
 iris_admin_user: epicadm
 iris_admin_group: epicuser

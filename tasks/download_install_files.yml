@@ -20,7 +20,7 @@
 
     - name: Copy install files from Ansible server
       ansible.builtin.copy:
-        src: "{{ playbook_dir }}/{{ iris_install_source_dir }}/{{ item }}"
+        src: "{{ iris_install_source_dir }}/{{ item }}"
         dest: "{{ iris_install_files_path }}/{{ item }}"
         # owner: "{{ iris_admin_user }}"
         # group: "{{ iris_admin_group }}"
