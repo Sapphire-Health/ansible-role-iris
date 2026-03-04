@@ -14,7 +14,7 @@
         path: "/home/{{ item.name }}/.ssh"
         state: directory
         owner: "{{ item.name }}"
-        group: "{{ item.group}}"
+        group: "{{ item.group }}"
         mode: "0700"
       loop: "{{ iris_users }}"
       when: item.generate_keys | default(false)
@@ -25,7 +25,7 @@
         type: rsa
         size: 2048
         owner: "{{ item.name }}"
-        group: "{{ item.group}}"
+        group: "{{ item.group }}"
       loop: "{{ iris_users }}"
       when: item.generate_keys | default(false)
 
@@ -33,29 +33,34 @@
       ansible.builtin.slurp:
         src: "/home/{{ item.name }}/.ssh/id_rsa.pub"
       become: true
-      register: generated_keys
+      register: iris_generated_keys
       loop: "{{ iris_users }}"
       when: item.generate_keys | default(false)
 
     - name: Set fact for generated keys
       ansible.builtin.set_fact:
-        authorized_keys: "{{ authorized_keys.results | default([]) + [{ 'user': key.item.name, 'content': key.content | b64decode, 'distribute_keys': key.item.distribute_keys | default(false) }] }}"
+        iris_authorized_keys: >-
+          {{ iris_authorized_keys | default([]) + [{
+            'user': key.item.name,
+            'content': key.content | b64decode,
+            'distribute_keys': key.item.distribute_keys | default(false)
+          }] }}
       vars:
         item: "{{ key.item }}"
-      loop: "{{ generated_keys.results }}"
+      loop: "{{ iris_generated_keys.results }}"
       loop_control:
         loop_var: key
       when: key.skipped is not defined or not key.skipped
 
     - name: Show authorized_keys
       ansible.builtin.debug:
-        msg: "{{ authorized_keys }}"
-      when: authorized_keys is defined
+        msg: "{{ iris_authorized_keys }}"
+      when: iris_authorized_keys is defined
 
     - name: Distribute keys
       ansible.builtin.include_tasks:
         file: distribute_ssh_keys.yml
-      loop: "{{ authorized_keys }}"
+      loop: "{{ iris_authorized_keys }}"
       loop_control:
         loop_var: authorized_key
-      when: authorized_keys is defined
+      when: iris_authorized_keys is defined
