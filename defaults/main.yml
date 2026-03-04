@@ -66,3 +66,4 @@ iris_directories:
     group: "epicsys"
 
 iris_bin: /usr/bin/iris
+iris_tuned_profile: epic

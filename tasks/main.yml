@@ -102,4 +102,5 @@
     file: install_iris.yml
   tags:
     - iris
+    - install_iris
     # - answerfile
