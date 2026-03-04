@@ -5,7 +5,7 @@
   block:
     - name: Set fact for hosts entries
       ansible.builtin.set_fact:
-        hosts_entries: "{{ hosts_entries | default({}) | combine({hostvars[current_host]['ansible_host'] | lower: aliases | unique }) }}"
+        iris_hosts_entries: "{{ iris_hosts_entries | default({}) | combine({hostvars[current_host]['ansible_host'] | lower: aliases | unique}) }}"
       vars:
         aliases:
           - "{{ hostvars[current_host]['ansible_hostname'] | lower }}"
@@ -16,20 +16,20 @@
         loop_var: current_host
       when: inventory_hostname != current_host
 
-    # - name: Show hosts_entries
+    # - name: Show iris_hosts_entries
     #   ansible.builtin.debug:
-    #     msg: "{{ hosts_entries }}"
-    #   when: hosts_entries is defined
+    #     msg: "{{ iris_hosts_entries }}"
+    #   when: iris_hosts_entries is defined
 
     - name: Add hosts entries
       ansible.builtin.lineinfile:
         path: /etc/hosts
         insertafter: ^.*localhost.*$
-        regexp: '^{{ item.key}}'
+        regexp: '^{{ item.key }}'
         line: "{{ item.key }}\t{{ item.value | join(' ') }}"
         backup: "{{ iris_config_backup | default(false) }}"
-      loop: "{{ hosts_entries | dict2items }}"
+      loop: "{{ iris_hosts_entries | dict2items }}"
       loop_control:
         label: "{{ item.key }}\t{{ item.value | join(' ') }}"
       become: true
-      when: hosts_entries is defined
+      when: iris_hosts_entries is defined
