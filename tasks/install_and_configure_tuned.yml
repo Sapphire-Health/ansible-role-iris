@@ -33,7 +33,7 @@
         section: variables
         option: hugepagesz
         value: 1G
-      when: hugepages is defined
+      when: iris_hugepages is defined
 
     - name: Configure hugepages
       community.general.ini_file:
@@ -45,8 +45,8 @@
         # no_extra_spaces: true
         section: variables
         option: hugepages
-        value: "{{ hugepages }}"
-      when: hugepages is defined
+        value: "{{ iris_hugepages }}"
+      when: iris_hugepages is defined
 
     - name: Check if instance is AWS EC2
       ansible.builtin.uri:
