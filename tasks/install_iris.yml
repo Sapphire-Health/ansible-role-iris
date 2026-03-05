@@ -3,18 +3,30 @@
   tags:
     - always
   block:
-  - name: Check if Iris binary exists
-    ansible.builtin.stat:
-      path: "{{ iris_bin }}"
-    register: irisbin
+    - name: Check if template already exists to persist password for idempotency
+      ansible.builtin.stat:
+        path: "{{ iris_extracted_install_files_path }}/{{ iris_answerfile_name }}"
+      register: iris_existing_template
+      when: iris_instaserver_variables.Password is not defined
 
-  - name: Install Iris if not already installed
-    when: irisbin.stat.exists != True
-    block:
+    - name: Persist template password
+      when: iris_existing_template is not skipped and iris_existing_template.stat.exists
+      block:
+        - name: Read template
+          ansible.builtin.slurp:
+            src: "{{ iris_extracted_install_files_path }}/{{ iris_answerfile_name }}"
+          register: iris_existing_template_content
 
-    - name: Set facts for IRIS installation
-      ansible.builtin.set_fact:
-        answer_file: "{{ iris_instaserver_variables }}"
+        - name: Extract Password value safely
+          ansible.builtin.set_fact:
+            iris_password: >-
+              {{
+                (iris_existing_template_content.content | b64decode).splitlines()
+                | select('match', '^\s*Password=')
+                | map('regex_replace', '^\s*Password=', '')
+                | map('trim')
+                | first
+              }}
 
     - name: Template to build answer_file
       ansible.builtin.template:
@@ -25,16 +37,24 @@
         mode: '0644'
 
     - name: Show the contents of the answer file
-      ansible.builtin.shell: "cat {{ iris_extracted_install_files_path }}/{{ iris_answerfile_name }}"
-      register: answer_file_contents
+      ansible.builtin.command: "cat {{ iris_extracted_install_files_path }}/{{ iris_answerfile_name }}"
+      changed_when: false
+      register: iris_answer_file_contents
 
     - name: Debug the answer file contents
       ansible.builtin.debug:
-        msg: "{{ answer_file_contents.stdout }}"
+        msg: "{{ iris_answer_file_contents.stdout }}"
 
     - name: Install Iris
-      command: "sh {{ iris_instaserver_file }} --component {{ component | default('BuildCustom') }} --variable_file {{ iris_extracted_install_files_path }}/{{ iris_answerfile_name }}"
+      ansible.builtin.shell: >
+        sh {{ iris_instaserver_file }}
+        --component {{ component | default('BuildCustom') }}
+        --variable_file {{ iris_extracted_install_files_path }}/{{ iris_answerfile_name }}
       args:
         chdir: "{{ iris_install_files_path }}"
-      when: irisbin.stat.exists != True
-      register: irisinstall
+      changed_when: iris_install.rc == 0
+      register: iris_install
+
+    - name: Show iris_install
+      ansible.builtin.debug:
+        msg: "{{ iris_install.stdout }}"

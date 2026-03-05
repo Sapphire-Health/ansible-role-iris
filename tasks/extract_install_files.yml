@@ -6,13 +6,13 @@
     - name: Check if install files are already extracted
       ansible.builtin.stat:
         path: "{{ iris_extracted_install_files_path }}"
-      register: extracted_directory
+      register: iris_extracted_directory
 
     - name: Extract install files
       ansible.builtin.command: "sh {{ iris_instaserver_file }} -extract"
       args:
         chdir: "{{ iris_install_files_path }}"
-      when: not extracted_directory.stat.exists
-      changed_when: not extracted_directory.stat.exists
+      when: not iris_extracted_directory.stat.exists
+      changed_when: not iris_extracted_directory.stat.exists
       # become: true
       # become_user: "{{ iris_admin_user }}"
