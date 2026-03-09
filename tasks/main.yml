@@ -3,23 +3,12 @@
 #   ansible.builtin.assert:
 #     that:
 #       - "lookup('ansible.builtin.env', 'SQL_SA_PASSWORD', default=sql_sa_password) is defined"
-- name: Check assertions
-  ansible.builtin.include_tasks:
-    file: check_assertions.yml
-  tags:
-    - always
 
 - name: Configure selinux
   ansible.builtin.include_tasks:
     file: configure_selinux.yml
   tags:
     - selinux
-
-- name: Define variables
-  ansible.builtin.include_tasks:
-    file: define_variables.yml
-  tags:
-    - always
 
 - name: Install dependencies
   ansible.builtin.include_tasks:
@@ -81,6 +70,12 @@
   tags:
     - download
     - iris
+
+- name: Define variables
+  ansible.builtin.include_tasks:
+    file: define_variables.yml
+  tags:
+    - always
 
 - name: Extract install files
   ansible.builtin.include_tasks:

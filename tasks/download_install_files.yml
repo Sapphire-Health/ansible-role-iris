@@ -3,6 +3,22 @@
   tags:
     - always
   block:
+    - name: Make sure iris_install_source_dir is defined
+      ansible.builtin.assert:
+        that:
+          - 'iris_install_source_dir is defined'
+          - 'iris_install_source_dir != ""'
+
+    - name: Show iris_install_source_dir
+      ansible.builtin.debug:
+        msg: "iris_install_source_dir: {{ iris_install_source_dir }}"
+
+    - name: Make sure required variables are defined
+      ansible.builtin.assert:
+        that:
+          - '".tar.gz" in iris_install_file'
+          - '".sh" in iris_instaserver_file'
+
     - name: Copy install files via HTTP
       ansible.builtin.get_url:
         url: "{{ iris_install_source_dir }}/{{ item }}"
