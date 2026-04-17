@@ -3,6 +3,12 @@
   tags:
     - always
   block:
+    - name: Check for existing IRIS instances
+      ansible.builtin.command: iris qlist
+      register: iris_qlist
+      changed_when: false
+      failed_when: false
+
     - name: Check if template already exists to persist password for idempotency
       ansible.builtin.stat:
         path: "{{ iris_extracted_install_files_path }}/{{ iris_answerfile_name }}"

@@ -1,5 +1,7 @@
 {% for instance in iris_instaserver_variables.Instances %}
+{% if instance.Instance not in iris_qlist.stdout %}
 Instance={{instance.Instance}},Directory={{instance.Directory | default('/epic/' + instance.Instance | lower)}},InstanceType={{instance.Type | default('NONPROD')}},SuperServerPort={{instance.SuperServerPort | default(1971 + loop.index)}},WebServerPort={{instance.WebServerPort | default(57771 + loop.index)}}
+{% endif %}
 {% endfor %}
 LicenseKey={{iris_install_files_path}}/{{iris_key_file}}
 Password={{iris_instaserver_variables.Password | default(iris_password, true) | default(lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters', 'digits'], length=12))}}
