@@ -84,10 +84,18 @@
     - extract
     - iris
 
+- name: Verify tuned configuration and set skip_tuned if needed
+  ansible.builtin.include_tasks:
+    file: verify_tuned.yml
+  tags:
+    - tuned
+    - hugepages
+    - iris
+
 - name: Install and configure tuned
   ansible.builtin.include_tasks:
     file: install_and_configure_tuned.yml
-  when: iris_hugepages is defined and iris_hugepages|int > 0
+  when: skip_tuned is not defined or skip_tuned == False
   tags:
     - tuned
     - hugepages

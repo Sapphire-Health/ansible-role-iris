@@ -1,0 +1,88 @@
+- name: Run tuned-adm verify command
+  ansible.builtin.command: /usr/sbin/tuned-adm verify
+  failed_when: false
+  changed_when: false
+  register: iris_tunedadm_verify
+
+- name: Set skip_tuned if iris_tunedadm_verify.rc == 0
+  ansible.builtin.set_fact:
+    skip_tuned: '{{ iris_tunedadm_verify.rc == 0 }}'
+
+- name: Debug skip_tuned if iris_tunedadm_verify.rc == 0
+  ansible.builtin.debug:
+    msg: >-
+      iris_tunedadm_verify.rc = {{ iris_tunedadm_verify.rc }} then skip_tuned =
+      {{ skip_tuned }}
+
+- name: Get/set hugespages from tuned.conf
+  when: skip_tuned is not defined or skip_tuned == True
+  block:
+    - name: Get hugepages value from tuned.conf
+      ansible.builtin.command: grep -E '^hugepages\s*=' /etc/tuned/epic/tuned.conf
+      register: tuned_hugepages_raw
+      changed_when: false
+      ignore_errors: true
+    - name: Set hugepages value as fact
+      ansible.builtin.set_fact:
+        hugepages_value: |-
+          {{ tuned_hugepages_raw.stdout | default('') 
+            | regex_replace('^hugepages\s*=\s*', '') 
+            | trim 
+            | int 
+            | default(0) }}
+    # - name: Debug hugepages_value
+    #   ansible.builtin.debug:
+    #     msg: hugepages_value = {{ hugepages_value }}
+
+- name: Get and set meminfo_hugepages_value from meminfo
+  when: skip_tuned is not defined or skip_tuned == True
+  block:
+    - name: Get HugePages_Total from meminfo
+      ansible.builtin.command: grep HugePages_Total /proc/meminfo
+      register: meminfo_hugepages
+      changed_when: false
+    - name: Set hugepages_value from meminfo
+      ansible.builtin.set_fact:
+        meminfo_hugepages_value: >-
+          {{ meminfo_hugepages.stdout | regex_replace('^HugePages_Total:\s*',
+          '') | trim | int | default(0) }}
+    # - name: Debug meminfo_hugepages_value
+    #   ansible.builtin.debug:
+    #     msg: hugepages_value = {{ meminfo_hugepages_value }}
+
+- name: Checking if iris_hugepages <> hugepages_value
+  when: skip_tuned is not defined or skip_tuned == True
+  block:
+    - name: Set skip_tuned if iris_hugepages <> hugepages_value
+      ansible.builtin.set_fact:
+        skip_tuned: |-
+          {{ not ( iris_hugepages is defined and 
+                iris_hugepages | int != hugepages_value | int) }}
+
+- name: Debug skip_tuned if iris_hugepages <> hugepages_value
+  ansible.builtin.debug:
+    msg: >-
+      skip_tuned = {{ skip_tuned }}, iris_hugepages = {{ iris_hugepages }},
+      hugepages_value = {{ hugepages_value }}
+
+- name: Checking if iris_hugepages <> meminfo_hugepages_value
+  when: skip_tuned is not defined or skip_tuned == True
+  block:
+    - name: Set skip_tuned if iris_hugepages <> meminfo_hugepages_value
+      ansible.builtin.set_fact:
+        skip_tuned: |-
+          {{ not (  iris_hugepages is defined and 
+                 iris_hugepages | int != meminfo_hugepages_value | int) }}
+
+- name: Debug skip_tuned if iris_hugepages <> meminfo_hugepages_value
+  ansible.builtin.debug:
+    msg: >-
+      skip_tuned = {{ skip_tuned }}, iris_hugepages = {{ iris_hugepages }},
+      meminfo_hugepages_value = {{ meminfo_hugepages_value }}
+
+- name: Debug hugepages, iris_hugepages, and skip_tuned values
+  ansible.builtin.debug:
+    msg: >-
+      hugepages_value = {{ hugepages_value }} and iris_hugepages = {{
+      iris_hugepages | default('not defined') }} and meminfo_hugepages_value =
+      {{ meminfo_hugepages_value }} then skip_tuned = {{ skip_tuned}}
